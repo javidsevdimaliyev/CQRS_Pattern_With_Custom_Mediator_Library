@@ -16,7 +16,6 @@
 * [![Git](https://img.shields.io/badge/--F05032?logo=git&logoColor=ffffff)](http://git-scm.com/)
 * [![GitHub](https://badgen.net/badge/icon/github?icon=github&label)](https://github.com)
 * [![Visual Studio](https://img.shields.io/badge/Visual_Studio-5C2D91?logo=visual%20studio&logoColor=ffffff)](https://visualstudio.microsoft.com/)
-* [![NuGet](https://badgen.net/badge/icon/nuget?icon=nuget&label)](https://nuget.org/)
 
 ## Getting Started
 
