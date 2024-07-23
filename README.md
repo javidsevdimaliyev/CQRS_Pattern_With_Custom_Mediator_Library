@@ -13,10 +13,9 @@
 ### Built With
 
 * [![.NET](https://img.shields.io/badge/--512BD4?logo=.net&logoColor=ffffff)](https://dotnet.microsoft.com/)
-* [![Docker](https://badgen.net/badge/icon/docker?icon=docker&label)](https://docker.com/)
 * [![Git](https://img.shields.io/badge/--F05032?logo=git&logoColor=ffffff)](http://git-scm.com/)
 * [![GitHub](https://badgen.net/badge/icon/github?icon=github&label)](https://github.com)
-* [![Visual Studio](https://img.shields.io/badge/--6C33AF?logo=visual%20studio)](https://visualstudio.microsoft.com/)
+* [![Visual Studio](https://1000logos.net/wp-content/uploads/2023/04/Visual-Studio-logo.jpg)](https://visualstudio.microsoft.com/)
 * [![NuGet](https://badgen.net/badge/icon/nuget?icon=nuget&label)](https://nuget.org/)
 
 ## Getting Started
