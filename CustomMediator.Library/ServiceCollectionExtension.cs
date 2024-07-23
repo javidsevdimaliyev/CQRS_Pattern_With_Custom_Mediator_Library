@@ -10,6 +10,17 @@ namespace CustomMediator.Library
     {
         public static IServiceCollection AddCustomMediator(this IServiceCollection services, Assembly[] assemblies)
         {
+
+            AddRequestHandlers(services, assemblies);
+            AddNotificationHandlers(services, assemblies);
+            services.AddSingleton<IMediator, Mediator>();
+
+            return services;
+        }
+
+
+        private static void AddRequestHandlers(IServiceCollection services, Assembly[] assemblies)
+        {
             var types = assemblies.SelectMany(i => i.GetTypes()).Where(i => !i.IsInterface);
 
             var requestHandlers = types
@@ -18,18 +29,35 @@ namespace CustomMediator.Library
 
             foreach (var handler in requestHandlers)
             {
-                var handlerInterface = handler.GetInterfaces().FirstOrDefault();
+                var handlerInterface = handler.GetInterfaces().FirstOrDefault(i => i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>));
                 var requestType = handlerInterface.GetGenericArguments()[0];
                 var responseType = handlerInterface.GetGenericArguments()[1];
 
                 var genericType = typeof(IRequestHandler<,>).MakeGenericType(requestType, responseType);
 
                 services.AddTransient(genericType, handler);
+
+                //services.AddTransient(IRequestHandler<GetByIdProductQueryRequest, GetByIdProductQueryResponse>, GetByIdProductQueryHandler);
             }
+        }
 
-            services.AddSingleton<IMediator, Mediator>();
+        private static void AddNotificationHandlers(IServiceCollection services, Assembly[] assemblies)
+        {
+            var types = assemblies.SelectMany(i => i.GetTypes()).Where(i => !i.IsInterface);
 
-            return services;
+            var notificationHandlers = types
+                .Where(i => IsAssignableToGenericType(i, typeof(INotificationHandler<>)))
+                .ToList();
+
+            foreach (var handler in notificationHandlers)
+            {
+                var handlerInterface = handler.GetInterfaces().FirstOrDefault(i => i.GetGenericTypeDefinition() == typeof(INotificationHandler<>));
+                var domainEvent = handlerInterface.GetGenericArguments()[0];
+     
+                services.AddTransient(domainEvent, handler);
+
+                //services.AddTransient(INotificationHandler<OrderStartedDomainEvent>, OrderStartedDomainEventHandler);
+            }
         }
 
         public static IServiceProvider UseCustomMediator(this IServiceProvider serviceProvider)
@@ -40,28 +68,28 @@ namespace CustomMediator.Library
 
         
 
-        private static bool IsAssignableToGenericType(Type givenType, Type genericType)
+        private static bool IsAssignableToGenericType(Type givenType, Type targetType)
         {         
             var interfaceTypes = givenType.GetInterfaces();
 
             foreach (var it in interfaceTypes)
             {
-                if (IsGeneric(it, genericType))
+                if (IsGeneric(it, targetType))
                     return true;
             }
 
-            if (IsGeneric(givenType, genericType))
+            if (IsGeneric(givenType, targetType))
                 return true;
 
             Type baseType = givenType.BaseType;
             if (baseType == null) return false;
 
-            bool IsGeneric(Type _givenType, Type _genericType)
+            bool IsGeneric(Type _interfaceType, Type _targetType)
             {
-                return _givenType.IsGenericType && _givenType.GetGenericTypeDefinition() == _genericType;
+                return _interfaceType.IsGenericType && _interfaceType.GetGenericTypeDefinition() == _targetType;
             }
 
-            return IsAssignableToGenericType(baseType, genericType);
+            return IsAssignableToGenericType(baseType, targetType);
         }
     }
 }
